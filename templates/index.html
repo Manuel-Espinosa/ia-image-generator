@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Generador de Imagenes</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bulma@0.9.0/css/bulma.min.css"
+    />
+    <style>
+      .carousel {
+        display: flex;
+        overflow: hidden;
+        width: 1024px;
+        height: 1024px;
+        position: relative;
+      }
+      .carousel img {
+        min-width: 1024px;
+        transition: all 0.3s;
+      }
+      .carousel .prev,
+      .carousel .next {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background-color: rgba(255, 255, 255, 0.5);
+        padding: 10px;
+        cursor: pointer;
+      }
+      .carousel .prev {
+        left: 10px;
+      }
+      .carousel .next {
+        right: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <section class="section">
+      <div class="container">
+        <h1 class="title">Consumo de la API de OpenAI DALL·2 con Flask y Jinja 2</h1>
+        <form action="/" method="post">
+          <div class="columns">
+            <!-- First Column -->
+            <div class="column is-four-fifths">
+              <div class="field">
+                <label class="label">Describe la imagen que deseas</label>
+                <div class="control">
+                  <input
+                    class="input"
+                    type="text"
+                    name="description"
+                    placeholder="Enter description"
+                    required
+                  />
+                </div>
+              </div>
+            </div>
+
+            <!-- Second Column -->
+            <div class="column">
+              <div class="field">
+                <label class="label">Numero de Images</label>
+                <div class="control">
+                  <input
+                    class="input"
+                    type="number"
+                    name="num_images"
+                    placeholder="Enter number of images"
+                    min="1"
+                    required
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Submission Button -->
+          <div class="field is-grouped">
+            <div class="control">
+              <button class="button is-link" type="submit">Generar</button>
+            </div>
+          </div>
+        </form>
+
+        {% if image_urls %}
+        <div class="carousel">
+          {% for image_url in image_urls %}
+          <figure class="image is-4by3">
+            <img src="{{ image_url }}" alt="Generated Image" />
+          </figure>
+          {% endfor %}
+          <div class="prev" onclick="shiftSlide(-1)">&#10094;</div>
+          <div class="next" onclick="shiftSlide(1)">&#10095;</div>
+        </div>
+        {% endif %}
+      </div>
+    </section>
+
+    <script>
+      let index = 0;
+      function shiftSlide(direction) {
+        const carousel = document.querySelector(".carousel");
+        const images = carousel.querySelectorAll("img");
+        if (direction === -1) {
+          index = (index - 1 + images.length) % images.length;
+        } else {
+          index = (index + 1) % images.length;
+        }
+        const offset = -index * 1024;
+        for (let img of images) {
+          img.style.transform = `translateX(${offset}px)`;
+        }
+      }
+    </script>
+  </body>
+</html>

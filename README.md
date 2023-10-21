@@ -18,10 +18,10 @@ docker network create flaskapp
 ## Instrucciones para levantar la app:
 
 - Clona este repositorio:
-```git clone URL_DEL_REPOSITORIO``````
+```git clone https://github.com/Manuel-Espinosa/ia-image-generator```
 
 - Navega al directorio del proyecto:
-```cd NOMBRE_DEL_DIRECTORIO```
+```cd ia-image-generator```
 
 - Utiliza docker-compose para levantar los servicios:
 ```docker-compose up```

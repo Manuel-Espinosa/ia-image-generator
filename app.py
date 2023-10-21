@@ -3,6 +3,7 @@ import requests
 import json
 import os
 import logging
+import openai
 
 app = Flask(__name__)
 
@@ -15,6 +16,30 @@ logger = logging.getLogger(__name__)
 @app.route('/')
 def index():
     return render_template('index.html')
+
+def send_question_using_description(description):
+    if not description:
+        return {'error': 'Description is required'}
+    if not openai.api_key:
+        logger.error('OpenAI API key is missing or not configured')
+        return {'error': 'OpenAI API key is not configured'}
+
+    try:
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {"role": "system", "content": "You are a helpful assistant."},
+                {"role": "user", "content": description}
+            ]     
+        )
+        logger.info(f"Raw API Response: {response.choices}")  # Logging the entire raw response
+        answer = response.choices[0].message['content']
+        return {'answer': answer}
+
+    except Exception as e:
+        logger.error(f'Error: {str(e)}')
+        return {'error': str(e)}
+
 
 def generate_image(description, n=1):
     url = OPENAI_URL
@@ -29,9 +54,11 @@ def generate_image(description, n=1):
     }
     
     try:
+        logger.info(f"Requested URL: {url}")
+        logger.info(f"Request Headers: {headers}")
+        logger.info(f"Request Data: {data}")
         response = requests.post(url, headers=headers, data=json.dumps(data))
         response.raise_for_status()
-        logger.info(f"Images requested: {n}")
         logger.info(f"API Response: {response.text}")
         
         data = response.json().get('data', [])
@@ -53,7 +80,10 @@ def generate_and_display_image():
         if description:
             image_urls = generate_image(description, n)
             logger.info(f"Generated image URLs: {image_urls}")
-            return render_template("index.html", image_urls=image_urls, description=description)
+            response_data = send_question_using_description(description)
+            answer = response_data.get('answer', '')
+            return render_template("index.html", image_urls=image_urls, description=description, answer=answer)
+
 
     return render_template("index.html", image_urls=None, description=None)
 

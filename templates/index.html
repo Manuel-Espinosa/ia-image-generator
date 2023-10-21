@@ -12,12 +12,12 @@
       .carousel {
         display: flex;
         overflow: hidden;
-        width: 1024px;
-        height: 1024px;
+        width: 512px;
+        height: 512px;
         position: relative;
       }
       .carousel img {
-        min-width: 1024px;
+        min-width: 512px;
         transition: all 0.3s;
       }
       .carousel .prev,
@@ -40,7 +40,9 @@
   <body>
     <section class="section">
       <div class="container">
-        <h1 class="title">Consumo de la API de OpenAI DALL·2 con Flask y Jinja 2</h1>
+        <h1 class="title">
+          Consumo de la API de OpenAI DALL·2 con Flask y Jinja 2
+        </h1>
         <form action="/" method="post">
           <div class="columns">
             <!-- First Column -->
@@ -88,12 +90,15 @@
         {% if image_urls %}
         <div class="carousel">
           {% for image_url in image_urls %}
-          <figure class="image is-4by3">
-            <img src="{{ image_url }}" alt="Generated Image" />
-          </figure>
+          <img src="{{ image_url }}" alt="Generated Image" />
           {% endfor %}
           <div class="prev" onclick="shiftSlide(-1)">&#10094;</div>
           <div class="next" onclick="shiftSlide(1)">&#10095;</div>
+        </div>
+        {% endif %} {% if answer %}
+        <div class="box">
+          <h2 class="subtitle">Respuesta de ChatGPT:</h2>
+          <p>{{ answer }}</p>
         </div>
         {% endif %}
       </div>
